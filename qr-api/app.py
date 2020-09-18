@@ -14,6 +14,7 @@ class Connect(object):
     def get_connection():
         return MongoClient()
 
+
 @app.route("/qrs", methods=['GET'])
 def getQRs():
     db = client.test
