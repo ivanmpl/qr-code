@@ -2,26 +2,26 @@ from flask import Flask, jsonify
 from pymongo import MongoClient
 from bson import Binary, Code
 from bson.json_util import dumps, loads
-import json
+from mongoengine import connect, ObjectIdField
+from models import Qr
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-client = MongoClient()
 
 
-class Connect(object):
-    @staticmethod
-    def get_connection():
-        return MongoClient()
+def seedDB():
+    qr = Qr.objects(name='testQr').first()
+    if not qr:
+        Qr(name='testQr', url='www.google.com', data='123data').save()
 
 
 @app.route("/qrs", methods=['GET'])
 def getQRs():
-    db = client.test
-    cursor = db.qrs.find({})
-    return dumps(cursor)
+    # GET localhost/qrs
+    return jsonify(Qr.objects().to_json())
 
 
 if __name__ == '__main__':
-    connection = Connect.get_connection()
+    connect()
+    seedDB()
     app.run()
